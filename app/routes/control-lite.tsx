@@ -736,7 +736,7 @@ export default function FloodDemoControl() {
               readOnly
               style={{
                 width: "100%",
-                accentColor: "#F05B2D", // modern browsers honor this
+                accentColor: "#F05B2D", // orange accent
               }}
             />
             <div style={{ marginTop: 8, fontSize: 14, color: "#F05B2D" }}>
@@ -754,10 +754,7 @@ export default function FloodDemoControl() {
               background: phase === "idle" ? "#F05B2D" : "#9ca3af",
               color: "#fff",
               cursor: phase === "idle" ? "pointer" : "not-allowed",
-              boxShadow:
-                phase === "idle"
-                  ? "0 6px 16px rgba(240,91,45,0.25)"
-                  : "none",
+              boxShadow: phase === "idle" ? "0 6px 16px rgba(240,91,45,0.25)" : "none",
             }}
           >
             Start Demo Mode
@@ -765,7 +762,24 @@ export default function FloodDemoControl() {
           <div style={{ marginTop: 8, fontSize: 12, color: "#666" }}>
             Slider is display-only. Click Start to run the scripted simulation.
           </div>
+
+          {/* --- New: Brochure QR section --- */}
+          <div style={{ marginTop: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#111" }}>
+              Scan for brochure!
+            </div>
+
+            <div style={{ marginTop: 8, width: "100%", aspectRatio: "1 / 1", borderRadius: 12, overflow: "hidden", background: "#FFFAF8" }}>
+              <img
+                src="./images/qr-code.jpg"
+                alt="Brochure QR"
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+              />
+            </div>
+
+          </div>
         </div>
+
       </div>
 
       {/* Toasts (bottom-right) */}

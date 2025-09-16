@@ -8,6 +8,7 @@ export default [
   route("river", "routes/river.tsx"),
   route("sky-ov", "routes/sky-ov.tsx"),
   route("river-ov", "routes/river-ov.tsx"),
+  route("brochure", "routes/brochure.tsx"),
 
   // keep scaffold samples (optional)
   route("home", "routes/home.tsx"),
