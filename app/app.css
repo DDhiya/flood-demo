@@ -1,15 +1,344 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+/* ===================== THEME TOKENS ===================== */
+/* Light first */
+:root {
+  /* Brand (Flow Studios orange) */
+  --brand: #F05B2D;      /* main */
+  --brand-600: #D44F28;  /* hover/darker */
+  --brand-50:  #FFF1EB;  /* very light wash */
+  --brand-200: #FFC9B5;  /* soft border */
+  --brand-800: #7A2E16;  /* readable text on light */
+
+  /* Light neutrals */
+  --bg: #F8FAFC;
+  --text: #0F172A;
+  --muted: #475569;
+  --panel: #FFFFFF;
+  --border: #E2E8F0;
+
+  /* Buttons (subtle) */
+  --btn-bg: var(--brand-50);
+  --btn-border: var(--brand-200);
+  --btn-text: var(--brand-800);
+
+  /* Status (accessible in light mode) */
+  --status-normal: #16A34A;   /* green-600 */
+  --status-watch:  #2563EB;   /* blue-600 */
+  --status-warning:#F59E0B;   /* amber-500 */
+  --status-danger: #DC2626;   /* red-600 */
+
+  /* Links / accents */
+  --link: var(--brand);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Color Emoji";
 }
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+/* Manual forcing with data-theme (optional) */
+:root[data-theme="dark"] {
+  /* Keep brand, adjust supporting tones for contrast on dark */
+  --brand: #F05B2D;
+  --brand-600: #FF6E45;  /* slightly brighter hover on dark */
+  --brand-50:  #3B221A;  /* warm wash for dark */
+  --brand-200: #6A3A2B;
+  --brand-800: #FFD5C8;
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+  --bg: #0B1220;
+  --text: #E7EEFB;
+  --muted: #94A3B8;
+  --panel: #0F1A30;
+  --border: #1E2A44;
+
+  --btn-bg: var(--brand-50);
+  --btn-border: var(--brand-200);
+  --btn-text: var(--brand-800);
+
+  --status-normal: #34D399;  /* green-400 on dark */
+  --status-watch:  #60A5FA;  /* blue-400 */
+  --status-warning:#FBBF24;  /* amber-400 */
+  --status-danger: #F87171;  /* red-400 */
+
+  --link: #FF8A69;           /* brand tint for links on dark */
+}
+
+/* Respect user OS dark mode unless explicitly forced to light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #F05B2D;
+    --brand-600: #FF6E45;
+    --brand-50:  #3B221A;
+    --brand-200: #6A3A2B;
+    --brand-800: #FFD5C8;
+
+    --bg: #0B1220;
+    --text: #E7EEFB;
+    --muted: #94A3B8;
+    --panel: #0F1A30;
+    --border: #1E2A44;
+
+    --btn-bg: var(--brand-50);
+    --btn-border: var(--brand-200);
+    --btn-text: var(--brand-800);
+
+    --status-normal: #34D399;
+    --status-watch:  #60A5FA;
+    --status-warning:#FBBF24;
+    --status-danger: #F87171;
+    --status-subsiding: #3b82f6; /* Tailwind blue-500 */
+
+    --link: #FF8A69;
   }
 }
+
+/* ===================== BASE ===================== */
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+/* ===================== LAYOUT / COMPONENTS ===================== */
+/* Top bar uses brand orange */
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--brand);            /* ⬅️ brand orange */
+  border-bottom: 1px solid var(--brand-600);
+  color: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+.header .spacer { flex: 1; }
+.header strong { color: #fff; }
+
+/* Invert header buttons/links so they pop on orange */
+.header .btn {
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.35);
+  color: #fff;
+}
+.header .btn:hover {
+  background: rgba(255,255,255,0.24);
+  border-color: #fff;
+}
+.header a { color: #fff; }
+.header a:hover { text-decoration: underline; }
+
+.main { padding: 24px; }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+/* Keep bottom row truly full-width */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; }
+
+/* --- Compact top row (above AI panel) --- */
+.toprow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 12px; /* tighter spacing above AI panel */
+}
+
+/* Compact panels (less padding/typography) */
+.panel-compact { padding: 12px; border-radius: 10px; }
+.panel-compact h2, .panel-compact h3 { margin: 0 0 4px; font-size: 16px; }
+.panel-compact p { margin: 4px 0; font-size: 13px; }
+
+/* Map widget */
+.map-shell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #eef2f7;
+}
+
+/* Banner height (keep if you added it) */
+.map-shell.banner { aspect-ratio: auto; height: 120px; border-radius: 10px; }
+
+/* Uses a local image if present, with a graceful fallback gradient */
+.map-canvas {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: saturate(1.05);
+  z-index: 0;                 /* ⬅️ make canvas the bottom layer */
+}
+
+/* Center pin */
+.map-pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  background: var(--brand);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(240, 91, 45, 0.35);
+  z-index: 2;                 /* ⬅️ ensure pin is above canvas */
+}
+
+.map-coords {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.9);
+  color: var(--text);
+  border: 1px solid var(--border);
+  z-index: 3;                 /* ⬅️ above everything */
+}
+
+:root[data-theme="dark"] .map-coords {
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  border-color: rgba(255,255,255,0.25);
+}
+
+/* Two-column readings inside the sensor panel */
+.sensor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 24px;
+  align-items: baseline;
+}
+@media (max-width: 640px) {
+  .sensor-grid { grid-template-columns: 1fr; }
+}
+.sensor {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sensor .label { color: var(--muted); font-size: 13px; }
+.sensor .value { font-weight: 600; }
+
+/* Buttons */
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  cursor: pointer;
+  transition: filter .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.btn:hover { filter: brightness(1.03); border-color: var(--brand); }
+.btn:active { filter: brightness(0.98); }
+.btn-primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.btn-primary:hover { background: var(--brand-600); border-color: var(--brand-600); }
+
+/* Links */
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Fullscreen video pages */
+.fullscreen { position: fixed; inset: 0; background: #000; }
+video { width: 100%; height: 100%; object-fit: cover; }
+
+/* Helpers */
+.muted { color: var(--muted); }
+
+/* Range slider (subtle brand styling) */
+input[type="range"] {
+  width: 100%;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--border);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--brand);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--brand);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--brand);
+}
+
+input[type="range"][disabled] { opacity: 1; }
+input[type="range"][disabled]::-webkit-slider-thumb,
+input[type="range"][disabled]::-moz-range-thumb {
+  background: var(--brand);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--brand);
+}
+
+/* --- Toast notifications (bottom-right) --- */
+.toast-wrap {
+  position: fixed;
+  right: 16px;        /* ⬅️ move to right */
+  left: auto;         /* ⬅️ unset left */
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--brand);
+  border-radius: 12px;
+  padding: 12px 14px;
+  width: min(420px, 92vw);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  animation: toast-in .25s ease-out;
+}
+.toast-title { font-weight: 700; margin: 0 0 4px; }
+.toast-body { margin: 0; font-size: 14px; line-height: 1.35; }
+.toast-actions { display:flex; gap:8px; margin-top:10px; }
+.toast .btn { padding:6px 10px; border-radius: 6px; }
+
+.toast-close {
+  position:absolute; right:8px; top:8px;
+  background: transparent; border: 0; color: var(--muted);
+  cursor: pointer; font-size: 16px; line-height: 1;
+}
+@keyframes toast-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* PPS chips */
+.pps-chip {
+  display:inline-block;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin-right: 6px; margin-top: 6px;
+  border-radius: 999px;
+  background: var(--brand-50);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-border);
+}
+
